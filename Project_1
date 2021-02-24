@@ -1,0 +1,188 @@
+N = 5; % filter order
+n = 30000;
+
+W0 = 2*pi*2000;
+
+B = 2*pi*2000; % f=2 kHz
+
+delW = B/n;
+
+S=@(w) 1/(1+(w/W0)^2*N)*delW;
+N=@(w) 1/(1+(w/W0)^2*N)*delW;
+
+s=0;
+NOISE = 0;
+
+WS = 2*pi*8000; % fs=8 kHz
+
+for i=0:n
+    s=s+((S(i*delW)));
+end
+
+g=100;
+while( g>0)
+    NOISE= NOISE+((N(i*delW+g*ws)));
+    g=g-1;
+end
+
+SNR_dB = 10*log10(s/NOISE);
+
+x= [ 1 2 3 4 5 6 ];
+y= [55.1210 57.4256 58.6875 59.5453 60.1905 60.7055 ];
+plot(x,y);
+xlabel("Filter Order");
+ylabel("SNR in dB")
+
+
+%%
+
+
+N = 6;
+f = 2e3;
+[z,p,k] = butter(N,2*pi*f,'s');
+[den,num] = zp2tf(z,p,k);
+w = -(4*pi*f):(4*pi*f);
+x = 0;
+
+for i = 1:10
+    x = [x,2*w];
+end
+
+y = 0:max(size(x))-1;
+H = freqs(den,num,x);
+mag = abs(H);
+
+subplot(2,1,1);
+plot(y,mag);
+xlabel("w");
+ylabel("x3(w): magnitude of x(w)");
+
+phase = angle(H);
+phase_degree = (phase*180)/pi;
+subplot(2,1,2);
+plot(y,phase_degree);
+xlabel("w");
+ylabel("x3(w): phase of x(w)");
+
+
+%%
+
+N = 6;
+f = 2e3;
+ 
+[z,p,k] = butter(N,2*pi*f,'s');
+[den,num] = zp2tf(z,p,k);
+w = -4*pi*f:4*pi*f;
+
+H = freqs(den,num,w);
+magnitude = abs(H);
+phase = angle(H)
+x1 = -8000*pi:0;
+y1 = 1+x1/(8000*pi);
+x2 = 0:8000*pi;
+y2 = 1-x2/(8000*pi);
+y = [y1 y2];
+x = [x1 x2];
+m = y.*magnitude;
+
+l = -40000*pi:(80000*pi/(251330)):40000*pi
+u = [m m m m m 0 ];
+subplot(2,1,1);
+plot(l,u);
+
+
+
+%%
+
+N = 6;
+f = 2e3;
+T = 125*(10^-6);
+[z,p,k] = butter(N,2*pi*f,'s');
+[den,num] = zp2tf(z,p,k);
+
+w = -4*pi*f:4*pi*f;
+H = freqs(den,num,w);
+
+magnitude = abs(H);
+phase = angle(H);
+x1 = -8000*pi:0;
+y1 = 1+x1/(8000*pi);
+x2 = 0:8000*pi;
+y2 = 1-x2/(8000*pi);
+y = [y1 y2];
+x = [x1,x2];
+figure;
+subplot(2,1,1); 
+plot(x,y);
+z = y.*magnitude;
+ 
+r = (1000*sin((pi*w*T)/(2*pi)))/(pi*w*T/2*pi);
+ShOp = z.*r;
+
+figure;
+
+plot(w,ShOp);
+e = -40000*pi:(80000*pi/(251330)):40000*pi
+u = [ShOp ShOp ShOp ShOp ShOp 0 ];
+plot(e,u);
+
+
+%%
+
+f = 2000;
+w = -4*pi*f:4*pi*f;
+H_Recon = 1./sinc(pi*w*12.5*(10^-9));
+plot(w,H_Recon);
+Filter_order = 6;
+T = 25*(10^-6);
+[z,p,k] = butter(Filter_order,2*pi*f,'s');
+[den,num] = zp2tf(z,p,k);
+
+w = -4*pi*f:4*pi*f;
+H = freqs(den,num,w);
+magnitude = abs(H);
+phase = angle(H);
+
+x1 = -8000*pi:0;
+y1 = 1+x1/(8000*pi);
+x2 = 0:8000*pi;
+y2 = 1-x2/(8000*pi);
+y = [y1 y2];
+x = [x1,x2];
+z = y.*magnitude;
+
+r = (1000*sin((pi*w*T)/(2*pi)))/(pi*w*T/2*pi);
+SP = z.*r;
+HR_Out = SP.*H_Recon;
+plot(w,HR_Out);
+
+
+
+
+%%
+
+N = 6;
+f = 2e3;
+ 
+[z,p,k] = butter(N,2*pi*f,'s');
+
+[den,num] = zp2tf(z,p,k);
+
+w = -4*pi*f:4*pi*f;
+
+H = freqs(den,num,w);
+magnitude = abs(H); % To find the magnitude and phase
+phase = angle(H);
+
+figure;
+subplot(2,1,1);
+plot(w,magnitude);
+xlabel("w");
+ylabel("magnitude of x(w)");
+
+subplot(2,1,2);
+phase_degree = 180*phase/pi;
+
+plot(w,phase_degree);
+xlabel("w");
+ylabel("phase angle of x(w)");
