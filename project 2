@@ -1,1 +1,33 @@
-c
+N = 4; %% Filter Order
+Ap = 0.5;
+f1=2000; %% 2kHz, 3kHz, 4kHz
+fs = 20000;  %%10kHz, 20kHz,15kHz,40kHz 
+ts = 1/fs;
+
+Wn  = 2*pi*f1;
+
+[b,a] = cheby1(N,Ap,1,'s'); %%for Chebyshev filter.
+[bt,at] = lp2lp(b,a,Wn);
+[bz, az] = impinvar(bt,at,fs); %%impulse invariance method
+%%[bz, az] = bilinear(bt,at,fs) for bilinear transformation method
+[r,p,k] = residue(bz,az) %%partial fraction
+
+sys_ang = tf(bt,at)
+H_Dig = c2d(sys_ang,ts)
+Pole_Digital = pole(H_Dig)
+y = freqz(bz,az);
+magnitude = abs(y);
+
+subplot(2,1,1);
+plot(magnitude);
+title('H');
+xlabel(' frequency >>');
+ylabel('magnitude');
+
+phase = angle(y);
+phaseangle = phase*180/pi;
+subplot(2,1,2);
+plot(phaseangle);
+title('H Digital');
+xlabel('frequency >>');
+ylabel('phase ');
