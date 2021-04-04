@@ -23,3 +23,18 @@ disp(b);
 w = 0:0.01:pi;
 freqz(b,1,w);
 
+//2)
+fs=2000;
+SB_atten=60;            % Blackman window
+PB_ripple=0.1;
+
+L=109;
+
+wn=[0.3 0.5];
+window=blackman(L+1);
+wvtool(window)
+
+z=fir1(L,wn,window);
+display(z);
+;
+freqz(z);
