@@ -19,3 +19,5 @@ wvtool(window);
 b = fir1(L_value,Wc/pi,window);
 w = 0:0.01:pi;
 freqz(b,1,w);
+
+
