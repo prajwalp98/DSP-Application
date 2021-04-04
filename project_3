@@ -1,1 +1,21 @@
+//1)
 
+Fs=48000;
+F1=9200;
+Fp=5200;
+SB_atten=50;
+PB_ripple=0.3;
+Wc=(2*pi*Fc)/Fs;
+
+L=(3.3*Fs/(F1-Fp))-1; % for Hamming window to find L
+L_value=ceil(L);
+disp("Value is");
+disp(L_value);
+
+window=hamming(L+1);
+wvtool(window);
+
+
+b = fir1(L_value,Wc/pi,window);
+w = 0:0.01:pi;
+freqz(b,1,w);
